@@ -2,13 +2,26 @@
   <head>
     <title>Todo App</title>
     <style>
-      .hidden{
+      .hidden {
         display: None;
       }
-      ul{
+      ul {
         list-style: none;
         padding: 0;
         margin: 0;
+        width: 200px;
+      }
+      li {
+        clear: both;
+      }
+      li button {
+        -webkit-appearance: None;
+        border: None;
+        outline: None;
+        color: red;
+        float: right;
+        cursor: pointer;
+        font-size: 20px;
       }
     </style>
   </head>
@@ -22,7 +35,10 @@
 
     <ul id = "todos">
       {% for d in data %}
-      <li><input class="check-completed" type="checkbox" data-id="{{ d.id }}" {% if d.completed %} checked {% endif %} /> {{ d.description }}</li>
+      <li><input class="check-completed" type="checkbox" data-id="{{ d.id }}" {% if d.completed %} checked {% endif %} />
+        {{ d.description }}
+        <button class="delete-button" data-id="{{ d.id }}">&cross;</button>
+      </li>
       {% endfor %}
     </ul>
 
@@ -48,6 +64,18 @@
         })
       }
     }
+
+    const deleteBtns = document.querySelectorAll('.delete-button');
+    for (let i = 0; i < deleteBtns.length; i++) {
+      const btn = deleteBtns[i];
+      btn.onclick = function(e) {
+        const todoId = e.target.dataset['id'];
+        fetch('/todos/' + todoId, {
+          method: 'DELETE'
+        });
+      }
+    }
+
     document.getElementById('form').onsubmit = function(e) {
       e.preventDefault();
       fetch('/todos/create', {
